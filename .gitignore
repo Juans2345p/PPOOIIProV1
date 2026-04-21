@@ -1,3 +1,9 @@
+# Ignorar configuraciones locales de Bruno y secretos
+bruno-api/environments/*.bru
+bruno-api/.bruno
+# Si usas un archivo .env para tus variables
+.env
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar

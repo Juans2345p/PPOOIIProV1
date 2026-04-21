@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Repository()
+@Repository
 public interface VehiculoRepository extends JpaRepository<Vehiculo, Long>{
     Optional<Vehiculo> findByPlacaIgnoreCase(String placa);
     List<Vehiculo> findByTipo(String tipo);

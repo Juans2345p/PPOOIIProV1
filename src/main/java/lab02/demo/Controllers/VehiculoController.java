@@ -17,7 +17,26 @@ public class VehiculoController {
     @Autowired
     private VehiculoService vehiculoService;
 
-    // REQUERIMIENTO: POST con documentos obligatorios y estado inicial "En Verificación"
+    @GetMapping
+    public List<Vehiculo> listar() {
+        return vehiculoService.listarTodos();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Vehiculo> actualizar(@PathVariable Long id, @RequestBody Vehiculo vehiculo) {
+        // Llamamos al nuevo método que no resetea documentos
+        Vehiculo actualizado = vehiculoService.actualizarDatosBasicos(id, vehiculo);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        vehiculoService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // REQUERIMIENTO: POST con documentos obligatorios y estado inicial "En
+    // Verificación"
     @PostMapping
     public ResponseEntity<Vehiculo> crear(@RequestBody Vehiculo nuevoVehiculo) {
         // Llamamos al servicio para que ejecute la lógica de negocio
@@ -30,15 +49,22 @@ public class VehiculoController {
     // REQUERIMIENTO: Buscar por placa
     @GetMapping("/placa/{placa}")
     public ResponseEntity<Vehiculo> buscarPorPlaca(@PathVariable String placa) {
-        return ResponseEntity.ok(vehiculoService.buscarPorPlaca(placa));
+        Vehiculo v = vehiculoService.buscarPorPlaca(placa);
+        if (v == null) {
+            return ResponseEntity.notFound().build(); // Devuelve 404 si no existe
+        }
+        return ResponseEntity.ok(v);
     }
 
     // REQUERIMIENTO: Buscar por tipo (auto/moto)
     @GetMapping("/tipo/{tipo}")
     public List<Vehiculo> buscarPorTipo(@PathVariable String tipo) {
-        if(tipo.equals("0"))
-            return vehiculoService.buscarPorTipo("auto");
-        else
-            return vehiculoService.buscarPorTipo(tipo);
+        String tipoReal = switch (tipo) {
+            case "0" -> "auto";
+            case "1" -> "moto";
+            case "2" -> "camion";
+            default -> tipo;
+        };
+        return vehiculoService.buscarPorTipo(tipoReal);
     }
 }

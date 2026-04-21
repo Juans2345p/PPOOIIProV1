@@ -103,4 +103,39 @@ public class VehiculoService {
         return vehiculoRepository.save(vehiculo);
     }
 
+
+    //GEt datos
+    public List<Vehiculo> listarTodos(){
+        return vehiculoRepository.findAll();
+    }
+
+    //PUT
+    public Vehiculo findById(Long id){
+        return vehiculoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("No hay veh por id"));
+    }
+
+    @Transactional
+    public Vehiculo actualizarDatosBasicos(Long id, Vehiculo datosNuevos) {
+        // 1. Buscar el vehículo actual
+        Vehiculo vehiculoExistente = vehiculoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado con ID: " + id));
+
+        // 2. Actualizar solo campos básicos (NO tocamos la lista de documentos aquí)
+        vehiculoExistente.setMarca(datosNuevos.getMarca());
+        vehiculoExistente.setModelo(datosNuevos.getModelo());
+        vehiculoExistente.setColor(datosNuevos.getColor());
+        vehiculoExistente.setLinea(datosNuevos.getLinea());
+        vehiculoExistente.setServicio(datosNuevos.getServicio());
+        vehiculoExistente.setCapacidad(datosNuevos.getCapacidad());
+        vehiculoExistente.setCombustible(datosNuevos.getCombustible());
+
+        // 3. Guardar cambios
+        return vehiculoRepository.save(vehiculoExistente);
+    }
+
+    //DETELE
+    public void deleteById(Long id){
+        documentoRepository.deleteById(id);
+    }
 }
